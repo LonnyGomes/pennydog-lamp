@@ -1,15 +1,35 @@
 
+#include "FastLED.h"
+#define NUM_LEDS 7
+CRGB leds[NUM_LEDS];
+#define NEOPIXEL_DATA_PIN 6
+
 int sensorPin =A0 ;  // define analog port A0
 int value = 0;    //set value to 0
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600); //set the baud rate to 9600
+
+  FastLED.addLeds<NEOPIXEL, NEOPIXEL_DATA_PIN>(leds, NUM_LEDS);
 }
 
 void loop() 
 {
   value = analogRead(sensorPin);  //set the value as the value read from A0
-  Serial.println(value, DEC);  //print the value and line wrap
-  delay(200);  //delay 0.2S
+  if (value > 0) {
+    Serial.println(value, DEC);  //print the value and line wrap
+  }
+
+  int hueVal = map(value, 0, 300, 96, 255);
+
+  for(int dot = 0; dot < NUM_LEDS; dot++) {
+    leds[dot].setHSV( hueVal, 255, 255);
+
+    // clear this led for the next time around the loop
+    //leds[dot] = CRGB::Black;
+  }
+
+  FastLED.show();
+  delay(60);
 }
