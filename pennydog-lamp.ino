@@ -4,6 +4,7 @@
 CRGB leds[NUM_LEDS];
 #define NEOPIXEL_DATA_PIN 6
 #define MODE_TOGGLE_SWITCH_PIN 7
+#define POT_PIN A5
 #define SOUND_BUF_LEN 5
 #define LOUDNESS_THRESHOLD 365
 #define LOUDNESS_TIMER_COUNT 100
@@ -14,6 +15,7 @@ int sensorPin =A0 ;  // define analog port A0
 int value = 0;    //set value to 0
 int SOUND_BUF[SOUND_BUF_LEN];
 int loudnessTimer = 0;
+int prevPotVal = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -33,7 +35,20 @@ void setup() {
 void loop() 
 {
   int hueMeanVal;
-  int modeToggleState;
+  int modeToggleState;  
+  int potVal;
+  int potDiff;
+
+  potVal = map(analogRead(POT_PIN), 0, 688, 0, 255);
+  potDiff = potVal - prevPotVal;
+
+  if (abs(potDiff) < 10 && potVal > 0 && potVal <= 255) {
+    // change hasn't deviated enough, restore original val
+    potVal = prevPotVal;
+  } else {
+    // save new current potVal
+    prevPotVal = potVal;
+  }
 
   // retrieve current state of toggle
   modeToggleState = digitalRead(MODE_TOGGLE_SWITCH_PIN);
@@ -75,7 +90,7 @@ void loop()
 
     // update colors for each LED
     for(int dot = 0; dot < NUM_LEDS; dot++) {
-      leds[dot].setHSV( hueMeanVal, 255, 255);
+      leds[dot].setHSV( hueMeanVal, 255, potVal);
 
       // clear this led for the next time around the loop
       //leds[dot] = CRGB::Black;
@@ -84,7 +99,7 @@ void loop()
     int brightnessVal = 255;
     for(int dot = 0; dot < NUM_LEDS; dot++) {
       // clear this led for the next time around the loop
-      leds[dot].setHSV(0, 0, brightnessVal);
+      leds[dot].setHSV(0, 0, potVal);
     }
   }
 
