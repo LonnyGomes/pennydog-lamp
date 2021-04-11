@@ -5,14 +5,14 @@ CRGB leds[NUM_LEDS];
 #define NEOPIXEL_DATA_PIN 6
 #define MODE_TOGGLE_SWITCH_PIN 7
 #define POT_PIN A6
+#define AUDIO_SENSOR_PIN A3
 #define SOUND_BUF_LEN 5
 #define LOUDNESS_THRESHOLD 365
 #define LOUDNESS_TIMER_COUNT 100
 #define HUE_CLR_GREEN 96
 #define HUE_CLR_RED 255
 
-int sensorPin =A3 ;  // define analog port A0
-int value = 0;    //set value to 0
+int audioValue = 0;
 int SOUND_BUF[SOUND_BUF_LEN];
 int loudnessTimer = 0;
 int prevPotVal = 0;
@@ -54,18 +54,18 @@ void loop()
   modeToggleState = digitalRead(MODE_TOGGLE_SWITCH_PIN);
 
   // retreive current audio sound level
-  value = analogRead(sensorPin);  //set the value as the value read from A0
-  if (value >= 300) {
-    Serial.println(value, DEC);  //print the value and line wrap
+  audioValue = analogRead(AUDIO_SENSOR_PIN);  //set the audio value
+  if (audioValue >= 300) {
+    Serial.println(audioValue, DEC);  //print the value and line wrap
   }
 
   if (modeToggleState == HIGH) {
     // map audio value to hue color
-    int hueVal = map(value, 0, LOUDNESS_THRESHOLD, HUE_CLR_GREEN, HUE_CLR_RED);
+    int hueVal = map(audioValue, 0, LOUDNESS_THRESHOLD, HUE_CLR_GREEN, HUE_CLR_RED);
     int hueSum = hueVal;
 
     // if we reach a loadness threshold, start the timer
-    if (value >= LOUDNESS_THRESHOLD) {
+    if (audioValue >= LOUDNESS_THRESHOLD) {
         loudnessTimer = LOUDNESS_TIMER_COUNT;
     }
 
