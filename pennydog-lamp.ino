@@ -4,14 +4,14 @@
 CRGB leds[NUM_LEDS];
 #define NEOPIXEL_DATA_PIN 6
 #define MODE_TOGGLE_SWITCH_PIN 7
-#define POT_PIN A5
+#define POT_PIN A6
 #define SOUND_BUF_LEN 5
 #define LOUDNESS_THRESHOLD 365
 #define LOUDNESS_TIMER_COUNT 100
 #define HUE_CLR_GREEN 96
 #define HUE_CLR_RED 255
 
-int sensorPin =A0 ;  // define analog port A0
+int sensorPin =A3 ;  // define analog port A0
 int value = 0;    //set value to 0
 int SOUND_BUF[SOUND_BUF_LEN];
 int loudnessTimer = 0;
@@ -35,11 +35,11 @@ void setup() {
 void loop() 
 {
   int hueMeanVal;
-  int modeToggleState;  
+  int modeToggleState;
   int potVal;
   int potDiff;
 
-  potVal = map(analogRead(POT_PIN), 0, 688, 0, 255);
+  potVal = map(analogRead(POT_PIN), 0, 1023, 0, 255);
   potDiff = potVal - prevPotVal;
 
   if (abs(potDiff) < 10 && potVal > 0 && potVal <= 255) {
